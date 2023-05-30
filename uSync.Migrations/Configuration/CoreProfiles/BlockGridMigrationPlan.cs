@@ -30,7 +30,7 @@ public class BlockGridMigrationPlan : ISyncMigrationPlan
         SourceVersion = 8,
         PreferredMigrators = new Dictionary<string, string>
         {
-            { UmbConstants.PropertyEditors.Aliases.NestedContent, nameof(NestedToBlockListMigrator) },
+            { UmbConstants.PropertyEditors.Aliases.Grid, nameof(GridToBlockGridMigrator) },
         }
     };
 }
