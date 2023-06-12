@@ -1,4 +1,15 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Models.Blocks;
+using Umbraco.Cms.Core.PropertyEditors;
+using Umbraco.Extensions;
+using uSync.Migrations.Composing;
+using uSync.Migrations.Context;
+using uSync.Migrations.Extensions;
+using uSync.Migrations.Migrators.Models;
 
+namespace uSync.Migrations.Migrators;
 
 [SyncMigrator("Spectrum.Color.Picker")]
   public class SpectrumColorPickerToUmbColorPickerEyedropper : SyncPropertyMigratorBase
