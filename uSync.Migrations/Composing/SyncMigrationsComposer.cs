@@ -1,12 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
+using Umbraco.Cms.Web.BackOffice.Authorization;
 
 using uSync.Migrations.Configuration;
 using uSync.Migrations.Configuration.Models;
 using uSync.Migrations.Handlers;
+using uSync.Migrations.Legacy.Grid;
 using uSync.Migrations.Migrators;
 using uSync.Migrations.Migrators.BlockGrid.BlockMigrators;
 using uSync.Migrations.Migrators.BlockGrid.Extensions;
@@ -43,6 +47,8 @@ public static class SyncMigrationsBuilderExtensions
 
         builder.Services.AddSingleton<GridConventions>();
 
+        builder.Services.AddSingleton<ILegacyGridConfig, LegacyGridConfig>();
+
         builder
             .WithCollectionBuilder<SyncPropertyMigratorCollectionBuilder>()
                 .Append(builder.TypeLoader.GetTypes<ISyncPropertyMigrator>());
@@ -51,6 +57,9 @@ public static class SyncMigrationsBuilderExtensions
             .WithCollectionBuilder<SyncBlockMigratorCollectionBuilder>()
                 .Add(() => builder.TypeLoader.GetTypes<ISyncBlockMigrator>());
         
+        builder
+            .WithCollectionBuilder<SyncPropertyMergingCollectionBuilder>()
+                .Append(builder.TypeLoader.GetTypes<ISyncPropertyMergingMigrator>());
 
         builder.Services.AddTransient<ISyncMigrationFileService, SyncMigrationFileService>();
 
@@ -70,6 +79,9 @@ public static class SyncMigrationsBuilderExtensions
             .WithCollectionBuilder<ArchetypeMigrationConfigurerCollectionBuilder>()
                 .Add(() => builder.TypeLoader.GetTypes<IArchetypeMigrationConfigurer>());
 
+        builder.Services.AddAuthorization(o => 
+            CreatePolicies(o, Constants.Security.BackOfficeAuthenticationType));
+
         builder.Services.AddTransient<ISyncMigrationStatusService, SyncMigrationStatusService>();
         builder.Services.AddTransient<ISyncMigrationService, SyncMigrationService>();
         builder.Services.AddTransient<ISyncMigrationConfigurationService, SyncMigrationConfigurationService>();
@@ -82,5 +94,16 @@ public static class SyncMigrationsBuilderExtensions
         }
 
         return builder;
+    }
+
+    private static void CreatePolicies(AuthorizationOptions options,
+        string backOfficeAuthorizationScheme)
+    {
+        options.AddPolicy(uSyncMigrationsAuthorizationPolicies.MigrationsTreeAccess,
+            policy =>
+            {
+                policy.AuthenticationSchemes.Add(backOfficeAuthorizationScheme);
+                policy.Requirements.Add(new TreeRequirement(uSyncMigrations.TreeName));
+            });
     }
 }

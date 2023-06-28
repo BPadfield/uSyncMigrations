@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using uSync.Migrations.Models;
 
 namespace uSync.Migrations.Configuration.Models;
 
@@ -9,6 +10,11 @@ public class MigrationOptions
     public string Group { get; set; } = "legacy";
     public string Source { get; set; } = "uSync/data";
     public string Target { get; set; } = "uSync/migrated";
+
+    /// <summary>
+    ///  location where we will pickup site files from (e.g the root of the site)
+    /// </summary>
+    public string SiteFolder { get; set; } = "/";
 
     public int SourceVersion { get; set; } = 7;
 
@@ -38,7 +44,7 @@ public class MigrationOptions
     public Dictionary<string, List<string>>? BlockedItems { get; set; }
 
     /// <summary>
-    ///  Blocked properties use (alias of somethign to block.) syntax?. 
+    ///  Blocked properties use (alias of something to block.) syntax?. 
     /// </summary>
     public List<string>? IgnoredProperties { get; set; }
 
@@ -50,6 +56,12 @@ public class MigrationOptions
     public List<TabOptions>? ChangeTabs { get; set; }
 
     public string? ArchetypeMigrationConfigurer { get; set; }
+
+    /// <summary>
+    ///  things we might want to merge. 
+    /// </summary>
+    public Dictionary<string, MergingPropertiesConfig> MergingProperties { get; set; } = new(StringComparer.InvariantCultureIgnoreCase);
+
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]

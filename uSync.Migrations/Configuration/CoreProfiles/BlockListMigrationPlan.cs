@@ -1,5 +1,6 @@
 ﻿using uSync.Migrations.Composing;
 using uSync.Migrations.Configuration.Models;
+using uSync.Migrations.Migrators.BlockGrid;
 using uSync.Migrations.Migrators.Optional;
 
 namespace uSync.Migrations.Configuration.CoreProfiles;

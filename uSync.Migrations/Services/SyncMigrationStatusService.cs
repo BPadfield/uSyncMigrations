@@ -186,6 +186,7 @@ internal class SyncMigrationStatusService : ISyncMigrationStatusService
         {
             Source = status.Source,
             Target = status.Target,
+            SiteFolder = status.SiteFolder ?? "/",
             SourceVersion = status.Version,
             ArchetypeMigrationConfigurer = defaultOptions.ArchetypeMigrationConfigurer,
             BlockCommonTypes = defaultOptions.BlockCommonTypes,
@@ -199,6 +200,7 @@ internal class SyncMigrationStatusService : ISyncMigrationStatusService
             MigrationType = defaultOptions.MigrationType,
             PreferredMigrators = defaultOptions.PreferredMigrators,
             PropertyMigrators = defaultOptions.PropertyMigrators,
+            MergingProperties = defaultOptions.MergingProperties,           
         };
     }
 

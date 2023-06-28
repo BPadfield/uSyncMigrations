@@ -2,6 +2,7 @@
 using Umbraco.Cms.Core.Composing;
 using uSync.Migrations.Context;
 using uSync.Migrations.Migrators.Models;
+using uSync.Migrations.Models;
 
 namespace uSync.Migrations.Migrators;
 
@@ -22,10 +23,10 @@ public interface ISyncPropertyMigrator : IDiscoverable
 
 
 /// <summary>
-///  interface to impliment if you want to completly replace a datatype with something else ? 
+///  interface to implement if you want to completely replace a datatype with something else ? 
 /// </summary>
 /// <remarks>
-///  if you impliment this then the migrator will not migrate the datatype, but it will
+///  if you implement this then the migrator will not migrate the datatype, but it will
 ///  use the replacement info suppled to make sure all contenttypes and content use the 
 ///  replacement datatype.
 /// </remarks>
@@ -44,7 +45,7 @@ public interface ISyncVariationPropertyMigrator
 }
 
 /// <summary>
-/// interface to implemenet if your property splits up a value into separate properties
+/// interface to implement if your property splits up a value into separate properties
 /// </summary>
 public interface ISyncPropertySplittingMigrator
 {
@@ -55,4 +56,25 @@ public interface ISyncPropertySplittingMigrator
 
 
     IEnumerable<SplitPropertyInfo> GetSplitProperties(string contentTypeAlias, string propertyAlias, string propertyName, SyncMigrationContext context);
+}
+
+/// <summary>
+///  interface to call when we are merging properties together. 
+/// </summary>
+public interface ISyncPropertyMergingMigrator
+{
+    /// <summary>
+    ///  list of content types this merger will work for. 
+    /// </summary>
+    string[] ContentTypes { get; }
+
+    /// <summary>
+    ///  Get what the merged property will be called - and create it.
+    /// </summary>
+    SplitPropertyInfo GetMergedProperty(string contentTypeAlias, string propertyAlias, string propertyName, SyncMigrationContext context);
+
+    /// <summary>
+    ///  get the merged values 
+    /// </summary>
+    string GetMergedContentValues(IEnumerable<MergingPropertyValue> mergingPropertyValues, SyncMigrationContext context);
 }
